@@ -17,12 +17,12 @@ export class ApiRequest {
   // Методы
 
   //Get запрос
-  async Get(): Promise<IProduct[]> {
+  async getApiProducts(): Promise<IProduct[]> {
     const response = await this.api.get<IGetResponse>("/product/");
     return response.items;
   }
   // Post запрос
-  async Post(Data: IPostRequest): Promise<IPostResponse> {
+  async sendApiProducts(Data: IPostRequest): Promise<IPostResponse> {
     return this.api.post<IPostResponse>("/order/", Data, "POST");
   }
 }

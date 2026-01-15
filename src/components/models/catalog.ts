@@ -1,6 +1,6 @@
 import { IProduct } from "../../types";
 
-export class catalog {
+export class Catalog {
   // Список всех продуктов в каталоге
   private products: IProduct[] = [];
 

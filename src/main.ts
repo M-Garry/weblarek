@@ -1,4 +1,4 @@
-import { catalog } from './components/models/catalog';
+import { Catalog } from './components/models/catalog';
 import {apiProducts} from './utils/data'
 import './scss/styles.scss';
 import { Bag } from './components/models/bag';
@@ -10,7 +10,7 @@ import { API_URL } from './utils/constants';
 ////////////////////////////// Тестирование Локальной модели данных////////////////
 
 //Проверка каталога
-const productsModel = new catalog();
+const productsModel = new Catalog();
 productsModel.setProducts(apiProducts.items); 
 productsModel.setSelectedProduct(apiProducts.items[1])
 
@@ -22,17 +22,17 @@ console.log('Проверка метода getSelectedProduct у класса ca
 
 const bagModel = new Bag()
 
-bagModel.AddProduct(apiProducts.items[2])
-bagModel.AddProduct(apiProducts.items[3])
+bagModel.addProduct(apiProducts.items[2])
+bagModel.addProduct(apiProducts.items[3])
 
-console.log('Проверка метода ListProduct() у класса Bag: ', bagModel.ListProduct()) 
-console.log('Проверка метода CountProducts() у класса Bag: ', bagModel.CountProducts()) 
-console.log('Проверка метода SumProducts() у класса Bag: ', bagModel.SumProducts() ) 
-console.log('Проверка метода CheckProduct() у класса Bag: ', bagModel.CheckProduct(apiProducts.items[3].id) ) 
-bagModel.RemoveProduct(apiProducts.items[3])
-console.log('Проверка метода RemoveProduct() у класса Bag: ', bagModel.ListProduct()) 
-bagModel.ClearBag()
-console.log('Проверка метода ClearBag() у класса Bag: ', bagModel.ListProduct()) 
+console.log('Проверка метода ListProduct() у класса Bag: ', bagModel.listProduct()) 
+console.log('Проверка метода CountProducts() у класса Bag: ', bagModel.countProducts()) 
+console.log('Проверка метода SumProducts() у класса Bag: ', bagModel.sumProducts() ) 
+console.log('Проверка метода CheckProduct() у класса Bag: ', bagModel.checkProduct(apiProducts.items[3].id) ) 
+bagModel.removeProduct(apiProducts.items[3])
+console.log('Проверка метода RemoveProduct() у класса Bag: ', bagModel.listProduct()) 
+bagModel.clearBag()
+console.log('Проверка метода ClearBag() у класса Bag: ', bagModel.listProduct()) 
 
 //Проверка покупателя
 
@@ -43,17 +43,17 @@ const buyerModel = new Buyer({
   email: ''
 })
 
-console.log('Проверка метода GetBuyer() у класса Buyer: ', buyerModel.GetBuyer())
-console.log('Проверка метода Validate() у класса Buyer: ', buyerModel.Validate())
-buyerModel.UpdateBuyer('email','123@mail.ru')
-console.log('Проверка метода UpdateBuyer() у класса Buyer (добавил почту): ', buyerModel.GetBuyer())
-buyerModel.ClearBuyer()
-console.log('Проверка метода ClearBuyer() у класса Buyer: ', buyerModel.GetBuyer())
+console.log('Проверка метода GetBuyer() у класса Buyer: ', buyerModel.getBuyer())
+console.log('Проверка метода Validate() у класса Buyer: ', buyerModel.validate())
+buyerModel.updateBuyer('email','123@mail.ru')
+console.log('Проверка метода UpdateBuyer() у класса Buyer (добавил почту): ', buyerModel.getBuyer())
+buyerModel.clearBuyer()
+console.log('Проверка метода ClearBuyer() у класса Buyer: ', buyerModel.getBuyer())
 
 //Тестирование API
 const api = new Api(API_URL);
 const request = new ApiRequest(api)  
-productsModel.setProducts(await request.Get());  
+productsModel.setProducts(await request.getApiProducts());  
 console.log('Тут вывожу список товаров полученных в результате API запроса',productsModel.getProducts())
 
 
