@@ -305,10 +305,4 @@ events.on('success:close', () => {
 });
 
 header.render({ counter: bag.countProducts() });
-
-
 catalog.setProducts(await apirequest.getApiProducts()); 
-console.log(catalog.getProducts()) 
-// apirequest.getApiProducts().then((products) => {
-//   catalog.setProducts(products);
-// });

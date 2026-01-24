@@ -1,6 +1,6 @@
-import { Card, ICardData } from './card';
-import { ensureElement } from '../../utils/utils';
-import { categoryMap, CDN_URL } from '../../utils/constants';
+import { Card, ICardData } from "./card";
+import { ensureElement } from "../../utils/utils";
+import { categoryMap, CDN_URL } from "../../utils/constants";
 
 export interface ICardPreviewData extends ICardData {
   category: keyof typeof categoryMap;
@@ -16,15 +16,30 @@ export class CardPreview extends Card<ICardPreviewData> {
   protected descriptionElement: HTMLElement;
   protected buttonElement: HTMLButtonElement;
 
-  constructor(container: HTMLElement, protected onAction: () => void) {
+  constructor(
+    container: HTMLElement,
+    protected onAction: () => void,
+  ) {
     super(container);
 
-    this.categoryElement = ensureElement<HTMLElement>('.card__category', this.container);
-    this.imageElement = ensureElement<HTMLImageElement>('.card__image', this.container);
-    this.descriptionElement = ensureElement<HTMLElement>('.card__text', this.container);
-    this.buttonElement = ensureElement<HTMLButtonElement>('.card__button', this.container);
+    this.categoryElement = ensureElement<HTMLElement>(
+      ".card__category",
+      this.container,
+    );
+    this.imageElement = ensureElement<HTMLImageElement>(
+      ".card__image",
+      this.container,
+    );
+    this.descriptionElement = ensureElement<HTMLElement>(
+      ".card__text",
+      this.container,
+    );
+    this.buttonElement = ensureElement<HTMLButtonElement>(
+      ".card__button",
+      this.container,
+    );
 
-    this.buttonElement.addEventListener('click', () => this.onAction());
+    this.buttonElement.addEventListener("click", () => this.onAction());
   }
 
   set category(value: keyof typeof categoryMap) {
@@ -33,12 +48,12 @@ export class CardPreview extends Card<ICardPreviewData> {
   }
 
   set image(value: string) {
-    const file = value.startsWith('/') ? value.slice(1) : value;
+    const file = value.startsWith("/") ? value.slice(1) : value;
 
-    const src = value.startsWith('http') ? value : `${CDN_URL}/${file}`;
+    const src = value.startsWith("http") ? value : `${CDN_URL}/${file}`;
 
     this.imageElement.src = src;
-    this.imageElement.alt = this.titleElement.textContent ?? '';
+    this.imageElement.alt = this.titleElement.textContent ?? "";
   }
 
   set description(value: string) {

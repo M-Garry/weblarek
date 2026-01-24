@@ -1,6 +1,6 @@
-import { ensureElement } from '../../utils/utils';
-import { Form } from './form';
-import { TPayment } from '../../types';
+import { ensureElement } from "../../utils/utils";
+import { Form } from "./form";
+import { TPayment } from "../../types";
 
 export interface IOrderFormData {
   payment: TPayment;
@@ -15,26 +15,35 @@ export class OrderForm extends Form<IOrderFormData> {
   constructor(
     container: HTMLFormElement,
     onSubmit: () => void,
-    onChange: (field: keyof IOrderFormData, value: string) => void
+    onChange: (field: keyof IOrderFormData, value: string) => void,
   ) {
     super(container, onSubmit, onChange);
 
-    this.cardButton = ensureElement<HTMLButtonElement>('button[name="card"]', this.form);
-    this.cashButton = ensureElement<HTMLButtonElement>('button[name="cash"]', this.form);
-    this.addressInput = ensureElement<HTMLInputElement>('input[name="address"]', this.form);
+    this.cardButton = ensureElement<HTMLButtonElement>(
+      'button[name="card"]',
+      this.form,
+    );
+    this.cashButton = ensureElement<HTMLButtonElement>(
+      'button[name="cash"]',
+      this.form,
+    );
+    this.addressInput = ensureElement<HTMLInputElement>(
+      'input[name="address"]',
+      this.form,
+    );
 
-    this.cardButton.addEventListener('click', () => {
-      this.onChange('payment', 'card');
+    this.cardButton.addEventListener("click", () => {
+      this.onChange("payment", "card");
     });
 
-    this.cashButton.addEventListener('click', () => {
-      this.onChange('payment', 'cash');
+    this.cashButton.addEventListener("click", () => {
+      this.onChange("payment", "cash");
     });
   }
 
   set payment(value: TPayment | null) {
-    this.cardButton.classList.toggle('button_alt-active', value === 'card');
-    this.cashButton.classList.toggle('button_alt-active', value === 'cash');
+    this.cardButton.classList.toggle("button_alt-active", value === "card");
+    this.cashButton.classList.toggle("button_alt-active", value === "cash");
   }
 
   set address(value: string) {

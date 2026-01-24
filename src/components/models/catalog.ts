@@ -20,7 +20,7 @@ export class Catalog {
   // сохранение массива товаров полученного в параметрах метода;
   setProducts(products: IProduct[]): void {
     this.products = products;
-
+    this.events?.emit("catalog:changed");
   }
 
   // получение массива товаров из модели;
@@ -44,5 +44,4 @@ export class Catalog {
     if (!this.selectedProduct) return null;
     return this.getProductById(this.selectedProduct) ?? null;
   }
-  
 }

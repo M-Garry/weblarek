@@ -1,5 +1,5 @@
-import { ensureElement } from '../../utils/utils';
-import { Form } from './form';
+import { ensureElement } from "../../utils/utils";
+import { Form } from "./form";
 
 export interface IContactsFormData {
   email: string;
@@ -13,19 +13,25 @@ export class ContactsForm extends Form<IContactsFormData> {
   constructor(
     container: HTMLFormElement,
     onSubmit: () => void,
-    onChange: (field: keyof IContactsFormData, value: string) => void
+    onChange: (field: keyof IContactsFormData, value: string) => void,
   ) {
     super(container, onSubmit, onChange);
 
-    this.emailInput = ensureElement<HTMLInputElement>('input[name="email"]', this.form);
-    this.phoneInput = ensureElement<HTMLInputElement>('input[name="phone"]', this.form);
+    this.emailInput = ensureElement<HTMLInputElement>(
+      'input[name="email"]',
+      this.form,
+    );
+    this.phoneInput = ensureElement<HTMLInputElement>(
+      'input[name="phone"]',
+      this.form,
+    );
 
-    this.emailInput.addEventListener('input', () => {
-      this.onChange('email', this.emailInput.value);
+    this.emailInput.addEventListener("input", () => {
+      this.onChange("email", this.emailInput.value);
     });
 
-    this.phoneInput.addEventListener('input', () => {
-      this.onChange('phone', this.phoneInput.value);
+    this.phoneInput.addEventListener("input", () => {
+      this.onChange("phone", this.phoneInput.value);
     });
   }
 

@@ -1,5 +1,5 @@
-import { Component } from '../base/Component';
-import { ensureElement } from '../../utils/utils';
+import { Component } from "../base/Component";
+import { ensureElement } from "../../utils/utils";
 
 export interface ICardData {
   title: string;
@@ -14,13 +14,13 @@ export class Card<T extends ICardData> extends Component<T> {
     super(container);
 
     this.titleElement = ensureElement<HTMLElement>(
-      '.card__title',
-      this.container
+      ".card__title",
+      this.container,
     );
 
     this.priceElement = ensureElement<HTMLElement>(
-      '.card__price',
-      this.container
+      ".card__price",
+      this.container,
     );
   }
 
@@ -30,7 +30,7 @@ export class Card<T extends ICardData> extends Component<T> {
 
   set price(value: number | null) {
     if (value === null) {
-      this.priceElement.textContent = 'Недоступно';
+      this.priceElement.textContent = "Недоступно";
     } else {
       this.priceElement.textContent = `${value} синапсов`;
     }

@@ -1,6 +1,6 @@
-import { Card, ICardData } from './card';
-import { ensureElement } from '../../utils/utils';
-import { categoryMap, CDN_URL } from '../../utils/constants';
+import { Card, ICardData } from "./card";
+import { ensureElement } from "../../utils/utils";
+import { categoryMap, CDN_URL } from "../../utils/constants";
 
 export interface ICardCatalogData extends ICardData {
   category: keyof typeof categoryMap;
@@ -11,13 +11,22 @@ export class CardCatalog extends Card<ICardCatalogData> {
   protected categoryElement: HTMLElement;
   protected imageElement: HTMLImageElement;
 
-  constructor(container: HTMLElement, protected onSelect: () => void) {
+  constructor(
+    container: HTMLElement,
+    protected onSelect: () => void,
+  ) {
     super(container);
 
-    this.categoryElement = ensureElement<HTMLElement>('.card__category', this.container);
-    this.imageElement = ensureElement<HTMLImageElement>('.card__image', this.container);
+    this.categoryElement = ensureElement<HTMLElement>(
+      ".card__category",
+      this.container,
+    );
+    this.imageElement = ensureElement<HTMLImageElement>(
+      ".card__image",
+      this.container,
+    );
 
-    this.container.addEventListener('click', () => {
+    this.container.addEventListener("click", () => {
       this.onSelect();
     });
   }
@@ -28,13 +37,11 @@ export class CardCatalog extends Card<ICardCatalogData> {
   }
 
   set image(value: string) {
-    const file = value.startsWith('/') ? value.slice(1) : value;
+    const file = value.startsWith("/") ? value.slice(1) : value;
 
-    const src = value.startsWith('http')
-      ? value
-      : `${CDN_URL}/${file}`;
+    const src = value.startsWith("http") ? value : `${CDN_URL}/${file}`;
 
     this.imageElement.src = src;
-    this.imageElement.alt = this.titleElement.textContent ?? '';
+    this.imageElement.alt = this.titleElement.textContent ?? "";
   }
 }

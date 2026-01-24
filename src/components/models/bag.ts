@@ -15,7 +15,7 @@ export class Bag {
   //добавление товара, который был получен в параметре, в массив корзины;
   addProduct(product: IProduct) {
     this.products.push(product);
-     this.events?.emit("cart:changed");
+    this.events?.emit("cart:changed");
   }
 
   //удаление товара, полученного в параметре из массива корзины;
