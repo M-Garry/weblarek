@@ -1,23 +1,25 @@
 import { IBuyer, TPayment } from "../../types";
+import { EventEmitter } from "../base/Events";
+
+type BuyerChangeField = keyof IBuyer | "clear";
 
 
 export class Buyer implements IBuyer {
-  public payment: TPayment;
-  public address: string;
-  public email: string;
-  public phone: string;
+  public payment: TPayment = null;
+  public address: string = '';
+  public email: string = '';
+  public phone: string = '';
+  private events?: EventEmitter;
 
-  constructor(data: IBuyer) {
-    this.payment = data.payment;
-    this.address = data.address;
-    this.email = data.email;
-    this.phone = data.phone;
+  constructor(events?: EventEmitter) {
+    this.events = events;
   }
 //Методы
 
 //сохранение данных в модели
 updateBuyer<K extends keyof IBuyer>(field: K, value: IBuyer[K]): void {
   this[field] = value as this[K];
+  this.events?.emit("buyer:change", { field: field as BuyerChangeField });
 }
 
 //получение всех данных покупателя
@@ -36,6 +38,7 @@ clearBuyer(): void {
   this.address = '';
   this.email = '';
   this.phone = '';
+  this.events?.emit("buyer:change", { field: "clear" });
 }
 
 //валидация данных

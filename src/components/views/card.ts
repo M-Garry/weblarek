@@ -1,88 +1,38 @@
-// src/components/views/card.ts
+import { Component } from '../base/Component';
+import { ensureElement } from '../../utils/utils';
 
-import { Component } from "../base/Component";
-import { IEvents } from "../base/Events";
-import { ensureElement } from "../../utils/utils";
-import { categoryMap } from "../../utils/constants";
-
-export interface IProductCard {
-  id: string;
+export interface ICardData {
   title: string;
-  description?: string;
-  image?: string;
-  category?: string;
   price: number | null;
 }
 
-export abstract class Card extends Component<IProductCard> {
-  protected _title: HTMLElement;
-  protected _image: HTMLImageElement | null; // ← допускаем null
-  protected _category: HTMLElement | null; // ← допускаем null
-  protected _price: HTMLElement;
+export class Card<T extends ICardData> extends Component<T> {
+  protected titleElement: HTMLElement;
+  protected priceElement: HTMLElement;
 
-  constructor(
-    protected readonly blockName: string,
-    protected container: HTMLElement,
-    protected events: IEvents,
-  ) {
+  constructor(container: HTMLElement) {
     super(container);
 
-    this._title = ensureElement<HTMLElement>(
-      `.${blockName}__title`,
-      this.container,
-    );
-    this._image = this.container.querySelector<HTMLImageElement>(
-      `.${blockName}__image`,
-    );
-    this._category = this.container.querySelector<HTMLElement>(
-      `.${blockName}__category`,
-    );
-    this._price = ensureElement<HTMLElement>(
-      `.${blockName}__price`,
-      this.container,
+    this.titleElement = ensureElement<HTMLElement>(
+      '.card__title',
+      this.container
     );
 
-    this.container.addEventListener("click", () => {
-      this.events.emit(`${this.blockName}:select`, {
-        id: this.container.dataset.id,
-        
-      });
-    });
-  }
-
-  set id(value: string) {
-    this.container.dataset.id = value;
+    this.priceElement = ensureElement<HTMLElement>(
+      '.card__price',
+      this.container
+    );
   }
 
   set title(value: string) {
-    this._title.textContent = value;
-  }
-
-  set image(value: string | undefined) {
-  if (this._image && value !== undefined) {
-    this._image.src = value;
-    this._image.alt = this.title || 'Изображение товара';
-  }
-}
-
-  set category(value: string | undefined) {
-    if (this._category && value !== undefined) {
-      this._category.textContent = value;
-      this._category.className = `${this.blockName}__category`;
-      const colorClass = categoryMap[value as keyof typeof categoryMap];
-      if (colorClass) {
-        this._category.classList.add(`card__category_${colorClass}`);
-      }
-    }
+    this.titleElement.textContent = value;
   }
 
   set price(value: number | null) {
     if (value === null) {
-      this._price.textContent = "Бесценно";
-      this._price.classList.add(`${this.blockName}__price_unavailable`);
+      this.priceElement.textContent = 'Недоступно';
     } else {
-      this._price.textContent = `${value} синапсов`;
-      this._price.classList.remove(`${this.blockName}__price_unavailable`);
+      this.priceElement.textContent = `${value} синапсов`;
     }
   }
 }

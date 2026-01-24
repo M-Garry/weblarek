@@ -1,67 +1,48 @@
-// src/components/views/modal.ts
-
 import { Component } from '../base/Component';
-import { IEvents } from '../base/Events';
 import { ensureElement } from '../../utils/utils';
 
-// Интерфейс данных для Modal
-interface IModal {
+export interface ModalData {
   content: HTMLElement;
 }
 
-export class Modal extends Component<IModal> {
-  protected _content: HTMLElement;
-  protected _closeButton: HTMLButtonElement;
+export class Modal extends Component<ModalData> {
+  protected closeButton: HTMLButtonElement;
+  protected contentContainer: HTMLElement;
+  protected onKeyDown: (evt: KeyboardEvent) => void;
 
-  constructor(protected container: HTMLElement, protected events: IEvents) {
+  constructor(container: HTMLElement) {
     super(container);
 
-    this._content = ensureElement<HTMLElement>('.modal__content', this.container);
-    this._closeButton = ensureElement<HTMLButtonElement>('.modal__close', this.container);
+    this.closeButton = ensureElement<HTMLButtonElement>('.modal__close', this.container);
+    this.contentContainer = ensureElement<HTMLElement>('.modal__content', this.container);
 
-    // Закрытие по крестику
-    this._closeButton.addEventListener('click', () => {
-      this.events.emit('modal:close');
-    });
+    this.onKeyDown = (evt: KeyboardEvent) => {
+      if (evt.key === 'Escape') {
+        this.close();
+      }
+    };
 
-    // Закрытие по клику на оверлей
+    this.closeButton.addEventListener('click', () => this.close());
+
     this.container.addEventListener('click', (evt) => {
-      if ((evt.target as HTMLElement).classList.contains('modal')) {
-        this.events.emit('modal:close');
-      }
-    });
-
-    // Закрытие по Escape — только если модалка открыта
-    document.addEventListener('keydown', (evt) => {
-      if (evt.key === 'Escape' && this.container.classList.contains('modal_active')) {
-        this.events.emit('modal:close');
+      if (evt.target === this.container) {
+        this.close();
       }
     });
   }
 
-  // Устанавливает контент
   set content(value: HTMLElement) {
-    this._content.replaceChildren(value);
+    this.contentContainer.replaceChildren(value);
   }
 
-  // Открывает модалку
-  open() {
+  open(): void {
     this.container.classList.add('modal_active');
-    document.body.classList.add('noscroll');
-    this.events.emit('modal:open');
+    document.addEventListener('keydown', this.onKeyDown);
   }
 
-  // Закрывает модалку
-  close() {
-    if (!this.container.classList.contains('modal_active')) return; 
-
+  close(): void {
     this.container.classList.remove('modal_active');
-    document.body.classList.remove('noscroll');
-    this.events.emit('modal:close'); 
-  }
-
-  render(data?: Partial<IModal>): HTMLElement {
-    super.render(data);
-    return this.container;
+    this.contentContainer.replaceChildren();
+    document.removeEventListener('keydown', this.onKeyDown);
   }
 }
