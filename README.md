@@ -199,3 +199,216 @@ constructor(api: IApi) — принимает экземпляр объекта,
 
 `Post(Data: IPostRequest): Promise<IPostResponse>` - Выполняет POST-запрос к эндпоинту /order/, передавая в теле запроса данные заказа. Принимает параметр Data типа IPostRequest — объект с данными покупателя и списком товаров.
 Возвращает промис с ответом сервера типа IPostResponse
+
+
+## Слой представления (View)
+
+Все компоненты представления наследуются от базового класса `Component<T>` и реализуют логику отображения данных, полученных от модели или презентера. Компоненты не содержат бизнес-логики — они только рендерят DOM и передают действия пользователя (например, клики) через события.
+
+### Класс Basket
+
+**Назначение**: Отвечает за отображение содержимого корзины: списка товаров, итоговой суммы и кнопки оформления заказа.
+
+**Конструктор**:  
+`constructor(container: HTMLElement, onOrder: () => void)` — принимает DOM-элемент корзины и колбэк, вызываемый при нажатии на кнопку «Оформить».
+
+**Поля класса**:  
+`listElement: HTMLElement` — контейнер для списка товаров;  
+`totalElement: HTMLElement` — элемент для отображения итоговой суммы;  
+`orderButton: HTMLButtonElement` — кнопка оформления заказа.
+
+**Сеттеры**:  
+`items: HTMLElement[]` — заменяет содержимое списка переданными элементами и блокирует кнопку, если список пуст;  
+`total: number` — отображает сумму в формате «{value} синапсов».
+
+---
+
+### Класс Card
+
+**Назначение**: Базовый компонент карточки товара. Используется как родительский для специализированных карточек (`CardCatalog`, `CardPreview`, `CardBasket`).
+
+**Конструктор**:  
+`constructor(container: HTMLElement)` — принимает DOM-элемент карточки.
+
+**Поля класса**:  
+`titleElement: HTMLElement` — заголовок товара;  
+`priceElement: HTMLElement` — элемент цены.
+
+**Сеттеры**:  
+`title: string` — устанавливает текст заголовка;  
+`price: number | null` — отображает цену или «Недоступно», если значение `null`.
+
+---
+
+### Класс CardBasket
+
+**Назначение**: Карточка товара внутри корзины. Добавляет индекс и кнопку удаления.
+
+**Конструктор**:  
+`constructor(container: HTMLElement, onDelete: () => void)` — принимает DOM-элемент и колбэк удаления.
+
+**Поля класса**:  
+`indexElement: HTMLElement` — элемент для отображения порядкового номера;  
+`deleteButton: HTMLButtonElement` — кнопка удаления из корзины.
+
+**Сеттеры**:  
+`index: number` — устанавливает порядковый номер товара.
+
+---
+
+### Класс CardCatalog
+
+**Назначение**: Карточка товара в каталоге. Поддерживает категорию, изображение и обработку клика для открытия превью.
+
+**Конструктор**:  
+`constructor(container: HTMLElement, onSelect: () => void)` — принимает DOM-элемент и колбэк открытия превью.
+
+**Поля класса**:  
+`categoryElement: HTMLElement` — элемент категории;  
+`imageElement: HTMLImageElement` — изображение товара.
+
+**Сеттеры**:  
+`category: keyof typeof categoryMap` — устанавливает текст и CSS-класс категории;  
+`image: string` — задаёт `src` изображения с учётом CDN и абсолютных URL.
+
+---
+
+### Класс CardPreview
+
+**Назначение**: Карточка товара в модальном окне просмотра. Отображает полное описание, изображение, категорию и кнопку действия.
+
+**Конструктор**:  
+`constructor(container: HTMLElement, onAction: () => void)` — принимает DOM-элемент и колбэк нажатия на кнопку («В корзину» / «Удалить»).
+
+**Поля класса**:  
+`categoryElement: HTMLElement` — элемент категории;  
+`imageElement: HTMLImageElement` — изображение;  
+`descriptionElement: HTMLElement` — описание товара;  
+`buttonElement: HTMLButtonElement` — кнопка действия.
+
+**Сеттеры**:  
+`category: keyof typeof categoryMap` — устанавливает текст и CSS-класс категории;  
+`image: string` — задаёт `src` изображения;  
+`description: string` — устанавливает текст описания;  
+`buttonText: string` — меняет надпись на кнопке;  
+`buttonDisabled: boolean` — блокирует/разблокирует кнопку.
+
+---
+
+### Класс ContactsForm
+
+**Назначение**: Форма ввода контактных данных (email и телефон) после выбора адреса доставки.
+
+**Конструктор**:  
+`constructor(container: HTMLFormElement, onSubmit: () => void, onChange: (field: keyof IContactsFormData, value: string) => void)` — принимает форму, колбэк отправки и колбэк изменения полей.
+
+**Поля класса**:  
+`emailInput: HTMLInputElement` — поле email;  
+`phoneInput: HTMLInputElement` — поле телефона.
+
+**Сеттеры**:  
+`email: string` — устанавливает значение поля email;  
+`phone: string` — устанавливает значение поля телефона.
+
+---
+
+### Класс Form
+
+**Назначение**: Базовый класс для всех форм. Реализует общую логику валидации, обработки отправки и изменений.
+
+**Конструктор**:  
+`constructor(container: HTMLFormElement, onSubmit: () => void, onChange: (field: keyof T, value: string) => void)` — принимает форму, колбэк отправки и колбэк изменения полей.
+
+**Поля класса**:  
+`form: HTMLFormElement` — DOM-элемент формы;  
+`submitButton: HTMLButtonElement` — кнопка отправки;  
+`errorsElement: HTMLElement` — элемент для отображения ошибок.
+
+**Сеттеры**:  
+`valid: boolean` — блокирует/разблокирует кнопку отправки;  
+`errors: string` — отображает текст ошибок.
+
+---
+
+### Класс Gallery
+
+**Назначение**: Отображает список карточек товаров в виде галереи (каталога).
+
+**Конструктор**:  
+`constructor(container: HTMLElement)` — принимает контейнер галереи.
+
+**Поля класса**:  
+`catalogElement: HTMLElement` — корневой элемент галереи.
+
+**Сеттеры**:  
+`catalog: HTMLElement[]` — заменяет содержимое галереи переданными карточками.
+
+---
+
+### Класс Header
+
+**Назначение**: Шапка сайта. Отображает счётчик товаров в корзине и обрабатывает открытие корзины.
+
+**Конструктор**:  
+`constructor(events: IEvents, container: HTMLElement)` — принимает брокер событий и DOM-элемент шапки.
+
+**Поля класса**:  
+`counterElement: HTMLElement` — элемент счётчика;  
+`basketButton: HTMLButtonElement` — кнопка открытия корзины.
+
+**Сеттеры**:  
+`counter: number` — обновляет значение счётчика.
+
+---
+
+### Класс Modal
+
+**Назначение**: Универсальное модальное окно. Управляет открытием, закрытием и содержимым.
+
+**Конструктор**:  
+`constructor(container: HTMLElement)` — принимает DOM-элемент модального окна.
+
+**Поля класса**:  
+`closeButton: HTMLButtonElement` — кнопка закрытия;  
+`contentContainer: HTMLElement` — контейнер для вложенного компонента.
+
+**Сеттеры**:  
+`content: HTMLElement` — устанавливает содержимое модального окна.
+
+**Методы**:  
+`open(): void` — показывает модальное окно и добавляет обработчик Escape;  
+`close(): void` — скрывает окно, очищает содержимое и удаляет обработчик.
+
+---
+
+### Класс OrderForm
+
+**Назначение**: Форма выбора способа оплаты и ввода адреса доставки.
+
+**Конструктор**:  
+`constructor(container: HTMLFormElement, onSubmit: () => void, onChange: (field: keyof IOrderFormData, value: string) => void)` — принимает форму, колбэк отправки и колбэк изменения полей.
+
+**Поля класса**:  
+`cardButton: HTMLButtonElement` — кнопка оплаты картой;  
+`cashButton: HTMLButtonElement` — кнопка оплаты наличными;  
+`addressInput: HTMLInputElement` — поле адреса.
+
+**Сеттеры**:  
+`payment: TPayment | null` — активирует соответствующую кнопку оплаты;  
+`address: string` — устанавливает значение поля адреса.
+
+---
+
+### Класс Success
+
+**Назначение**: Экран успешного оформления заказа. Отображает итоговую сумму и кнопку возврата.
+
+**Конструктор**:  
+`constructor(container: HTMLElement, onClose: () => void)` — принимает DOM-элемент и колбэк закрытия.
+
+**Поля класса**:  
+`descriptionElement: HTMLElement` — элемент с описанием;  
+`closeButton: HTMLButtonElement` — кнопка закрытия.
+
+**Сеттеры**:  
+`total: number` — отображает сумму в формате «Списано {value} синапсов».

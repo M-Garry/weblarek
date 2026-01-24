@@ -1,27 +1,27 @@
-import './scss/styles.scss';
+import "./scss/styles.scss";
 
-import { Api } from './components/base/Api';
-import { EventEmitter } from './components/base/Events';
+import { Api } from "./components/base/Api";
+import { EventEmitter } from "./components/base/Events";
 
-import { ApiRequest } from './components/models/ApiRequest';
-import { Catalog } from './components/models/catalog';
-import { Bag } from './components/models/bag';
-import { Buyer } from './components/models/buyer';
+import { ApiRequest } from "./components/models/ApiRequest";
+import { Catalog } from "./components/models/catalog";
+import { Bag } from "./components/models/bag";
+import { Buyer } from "./components/models/buyer";
 
-import { Header } from './components/views/headers';
-import { Gallery } from './components/views/gallery';
-import { CardCatalog } from './components/views/cardcatalog';
-import { CardPreview } from './components/views/cardpreview';
-import { Basket } from './components/views/basket';
-import { CardBasket } from './components/views/cardbasket';
-import { Modal } from './components/views/modal';
-import { OrderForm } from './components/views/orderform';
-import { ContactsForm } from './components/views/contactform';
-import { Success } from './components/views/success';
+import { Header } from "./components/views/headers";
+import { Gallery } from "./components/views/gallery";
+import { CardCatalog } from "./components/views/cardcatalog";
+import { CardPreview } from "./components/views/cardpreview";
+import { Basket } from "./components/views/basket";
+import { CardBasket } from "./components/views/cardbasket";
+import { Modal } from "./components/views/modal";
+import { OrderForm } from "./components/views/orderform";
+import { ContactsForm } from "./components/views/contactform";
+import { Success } from "./components/views/success";
 
-import { ensureElement, cloneTemplate } from './utils/utils';
-import { API_URL, categoryMap } from './utils/constants';
-import { TPayment } from './types';
+import { ensureElement, cloneTemplate } from "./utils/utils";
+import { API_URL, categoryMap } from "./utils/constants";
+import { TPayment } from "./types";
 
 const events = new EventEmitter();
 
@@ -33,7 +33,7 @@ const bag = new Bag(events);
 const buyer = new Buyer(events);
 
 function errorsToString(errors: Record<string, string>) {
-  return Object.values(errors).filter(Boolean).join('; ');
+  return Object.values(errors).filter(Boolean).join("; ");
 }
 
 function isValid(errors: Record<string, string>) {
@@ -42,7 +42,7 @@ function isValid(errors: Record<string, string>) {
 
 function pickErrors<T extends string>(
   errors: Record<string, string>,
-  keys: readonly T[]
+  keys: readonly T[],
 ): Record<T, string> {
   const res = {} as Record<T, string>;
   keys.forEach((k) => {
@@ -51,44 +51,44 @@ function pickErrors<T extends string>(
   return res;
 }
 
-const headerContainer = ensureElement<HTMLElement>('.header');
-const galleryContainer = ensureElement<HTMLElement>('.gallery');
-const modalContainer = ensureElement<HTMLElement>('.modal');
+const headerContainer = ensureElement<HTMLElement>(".header");
+const galleryContainer = ensureElement<HTMLElement>(".gallery");
+const modalContainer = ensureElement<HTMLElement>(".modal");
 
 const header = new Header(events, headerContainer);
 const gallery = new Gallery(galleryContainer);
 const modal = new Modal(modalContainer);
 
-const basketView = new Basket(cloneTemplate('#basket'), () => {
-  events.emit('basket:order');
+const basketView = new Basket(cloneTemplate("#basket"), () => {
+  events.emit("basket:order");
 });
 
 const orderFormView = new OrderForm(
-  cloneTemplate('#order') as HTMLFormElement,
-  () => events.emit('order:submit'),
-  (field, value) => events.emit('order:change', { field, value })
+  cloneTemplate("#order") as HTMLFormElement,
+  () => events.emit("order:submit"),
+  (field, value) => events.emit("order:change", { field, value }),
 );
 
 const contactsFormView = new ContactsForm(
-  cloneTemplate('#contacts') as HTMLFormElement,
-  () => events.emit('contacts:submit'),
-  (field, value) => events.emit('contacts:change', { field, value })
+  cloneTemplate("#contacts") as HTMLFormElement,
+  () => events.emit("contacts:submit"),
+  (field, value) => events.emit("contacts:change", { field, value }),
 );
 
-const previewView = new CardPreview(cloneTemplate('#card-preview'), () => {
-  events.emit('product:action');
+const previewView = new CardPreview(cloneTemplate("#card-preview"), () => {
+  events.emit("product:action");
 });
 
-const success = new Success(cloneTemplate('#success'), () => {
-  events.emit('success:close');
+const success = new Success(cloneTemplate("#success"), () => {
+  events.emit("success:close");
 });
 
 function renderCatalog() {
   const products = catalog.getProducts();
 
   const cards = products.map((p) => {
-    const card = new CardCatalog(cloneTemplate('#card-catalog'), () => {
-      events.emit('catalog:item-select', { id: p.id });
+    const card = new CardCatalog(cloneTemplate("#card-catalog"), () => {
+      events.emit("catalog:item-select", { id: p.id });
     });
 
     return card.render({
@@ -104,8 +104,8 @@ function renderCatalog() {
 
 function renderBasket() {
   const items = bag.listProduct().map((item, index) => {
-    const row = new CardBasket(cloneTemplate('#card-basket'), () => {
-      events.emit('basket:item-remove', { id: item.id });
+    const row = new CardBasket(cloneTemplate("#card-basket"), () => {
+      events.emit("basket:item-remove", { id: item.id });
     });
 
     return row.render({
@@ -142,7 +142,11 @@ function openPreview() {
     image: product.image,
     category: product.category as keyof typeof categoryMap,
     description: product.description,
-    buttonText: isUnavailable ? 'Недоступно' : inCart ? 'Удалить из корзины' : 'Купить',
+    buttonText: isUnavailable
+      ? "Недоступно"
+      : inCart
+        ? "Удалить из корзины"
+        : "Купить",
     buttonDisabled: isUnavailable,
   });
 
@@ -152,7 +156,7 @@ function openPreview() {
 function openOrder() {
   const data = buyer.getBuyer();
   const allErrors = buyer.validate();
-  const stepErrors = pickErrors(allErrors, ['payment', 'address'] as const);
+  const stepErrors = pickErrors(allErrors, ["payment", "address"] as const);
 
   orderFormView.payment = data.payment;
   orderFormView.address = data.address;
@@ -168,7 +172,7 @@ function openOrder() {
 function openContacts() {
   const data = buyer.getBuyer();
   const allErrors = buyer.validate();
-  const stepErrors = pickErrors(allErrors, ['email', 'phone'] as const);
+  const stepErrors = pickErrors(allErrors, ["email", "phone"] as const);
 
   contactsFormView.email = data.email;
   contactsFormView.phone = data.phone;
@@ -189,7 +193,7 @@ function opensuccess(total: number) {
 function updateOrderView() {
   const data = buyer.getBuyer();
   const allErrors = buyer.validate();
-  const stepErrors = pickErrors(allErrors, ['payment', 'address'] as const);
+  const stepErrors = pickErrors(allErrors, ["payment", "address"] as const);
 
   orderFormView.payment = data.payment;
   orderFormView.address = data.address;
@@ -203,7 +207,7 @@ function updateOrderView() {
 function updateContactsView() {
   const data = buyer.getBuyer();
   const allErrors = buyer.validate();
-  const stepErrors = pickErrors(allErrors, ['email', 'phone'] as const);
+  const stepErrors = pickErrors(allErrors, ["email", "phone"] as const);
 
   contactsFormView.email = data.email;
   contactsFormView.phone = data.phone;
@@ -214,28 +218,28 @@ function updateContactsView() {
   });
 }
 
-events.on('catalog:changed', () => {
+events.on("catalog:changed", () => {
   renderCatalog();
 });
 
-events.on('cart:changed', () => {
+events.on("cart:changed", () => {
   header.render({ counter: bag.countProducts() });
   renderBasket();
 });
 
-events.on('basket:open', () => {
+events.on("basket:open", () => {
   openBasket();
 });
 
-events.on<{ id: string }>('catalog:item-select', ({ id }) => {
+events.on<{ id: string }>("catalog:item-select", ({ id }) => {
   catalog.setSelectedProduct(id);
 });
 
-events.on('catalog:select', () => {
+events.on("catalog:select", () => {
   openPreview();
 });
 
-events.on('product:action', () => {
+events.on("product:action", () => {
   const product = catalog.getSelectedProduct();
   if (!product) return;
 
@@ -248,35 +252,41 @@ events.on('product:action', () => {
   modal.close();
 });
 
-events.on<{ id: string }>('basket:item-remove', ({ id }) => {
+events.on<{ id: string }>("basket:item-remove", ({ id }) => {
   const product = catalog.getProductById(id);
   if (!product) return;
   bag.removeProduct(product);
 });
 
-events.on('basket:order', () => {
+events.on("basket:order", () => {
   openOrder();
 });
 
-events.on<{ field: 'payment' | 'address'; value: string }>('order:change', ({ field, value }) => {
-  if (field === 'payment') buyer.updateBuyer('payment', value as TPayment);
-  else buyer.updateBuyer('address', value);
-});
+events.on<{ field: "payment" | "address"; value: string }>(
+  "order:change",
+  ({ field, value }) => {
+    if (field === "payment") buyer.updateBuyer("payment", value as TPayment);
+    else buyer.updateBuyer("address", value);
+  },
+);
 
-events.on('order:submit', () => {
+events.on("order:submit", () => {
   openContacts();
 });
 
-events.on<{ field: 'email' | 'phone'; value: string }>('contacts:change', ({ field, value }) => {
-  buyer.updateBuyer(field, value);
-});
+events.on<{ field: "email" | "phone"; value: string }>(
+  "contacts:change",
+  ({ field, value }) => {
+    buyer.updateBuyer(field, value);
+  },
+);
 
-events.on('buyer:change', () => {
+events.on("buyer:change", () => {
   updateOrderView();
   updateContactsView();
 });
 
-events.on('contacts:submit', async () => {
+events.on("contacts:submit", async () => {
   const data = buyer.getBuyer();
   const total = bag.sumProducts();
 
@@ -300,9 +310,9 @@ events.on('contacts:submit', async () => {
   }
 });
 
-events.on('success:close', () => {
+events.on("success:close", () => {
   modal.close();
 });
 
 header.render({ counter: bag.countProducts() });
-catalog.setProducts(await apirequest.getApiProducts()); 
+catalog.setProducts(await apirequest.getApiProducts());
